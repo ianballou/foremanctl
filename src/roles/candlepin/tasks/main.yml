@@ -73,9 +73,10 @@
       - 'candlepin-candlepin-conf,target=/etc/candlepin/candlepin.conf,mode=0440,type=mount'
       - 'candlepin-tomcat-server-xml,target=/etc/tomcat/server.xml,mode=0440,type=mount'
       - 'candlepin-tomcat-conf,target=/etc/tomcat/tomcat.conf,mode=0440,type=mount'
-      - 'candlepin-db-ca,target={{ candlepin_database_ssl_ca_path }},mode=0440,type=mount'
+      - 'candlepin-db-ca,target={{ candlepin_database_ssl_ca_path }},mode=0440,type=mount' 
     volumes:
       - /var/log/candlepin:/var/log/candlepin:rw,Z
+      - /etc/crypto-policies:/etc/crypto-policies:ro
       - /var/log/tomcat:/var/log/tomcat:rw,Z
     quadlet_options:
       - |

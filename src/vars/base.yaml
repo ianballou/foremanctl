@@ -53,3 +53,5 @@ backup_foreman_oauth_consumer_secret: "{{ foreman_oauth_consumer_secret }}"
 backup_foreman_ca_certificate: "{{ foreman_ca_certificate }}"
 backup_foreman_client_certificate: "{{ foreman_client_certificate }}"
 backup_foreman_client_key: "{{ foreman_client_key }}"
+
+

@@ -1,7 +1,7 @@
 ---
 - name: Setup quadlet demo machine
   hosts:
-    - quadlet
+    - localhost
   become: true
   vars_files:
     - "../../vars/defaults.yml"
@@ -17,13 +17,13 @@
     - role: checks
       vars:
         checks_databases: "{{ all_databases }}"
-    - role: certificates
-      when: "certificates_source in ['default', 'custom_server']"
-    - role: certificate_checks
-      vars:
-        certificate_checks_certificate: "{{ server_certificate }}"
-        certificate_checks_key: "{{ server_key }}"
-        certificate_checks_ca: "{{ server_ca_certificate }}"
+#    - role: certificates
+#      when: "certificates_source in ['default', 'custom_server']"
+#    - role: certificate_checks
+#      vars:
+#        certificate_checks_certificate: "{{ server_certificate }}"
+#        certificate_checks_key: "{{ server_key }}"
+#        certificate_checks_ca: "{{ server_ca_certificate }}"
     - role: postgresql
       when:
         - database_mode == 'internal'

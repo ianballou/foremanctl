@@ -8,10 +8,10 @@
     state: stopped
   when: ansible_facts['services']['redis.service']['status'] | default('not-found') != 'not-found'
 
-- name: Remove Redis package
-  ansible.builtin.package:
-    name: redis
-    state: absent
+    #- name: Remove Redis package
+    #ansible.builtin.package:
+    #name: redis
+    #state: absent
 
 - name: Remove Redis image
   ansible.builtin.file:

@@ -14,6 +14,16 @@ module.config.adapter_module=org.candlepin.katello.KatelloModule
 candlepin.ca_key=/etc/candlepin/certs/candlepin-ca.key
 candlepin.ca_cert=/etc/candlepin/certs/candlepin-ca.crt
 
+# PQC crypto scheme configuration — PQC only, no legacy RSA fallback
+candlepin.crypto.schemes=pqc
+candlepin.crypto.default_scheme=pqc
+candlepin.crypto.temp.client_negotiation.enabled=true
+
+candlepin.crypto.scheme.pqc.cert=/etc/candlepin/certs/candlepin-ca.crt
+candlepin.crypto.scheme.pqc.key=/etc/candlepin/certs/candlepin-ca.key
+candlepin.crypto.scheme.pqc.signature_algorithm=ML-DSA-65
+candlepin.crypto.scheme.pqc.key_algorithm=ML-DSA-65
+
 candlepin.async.jobs.ExpiredPoolsCleanupJob.schedule=0 0 0 * * ?
 
 jpa.config.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect

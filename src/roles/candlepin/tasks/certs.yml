@@ -9,16 +9,28 @@
   notify:
     - Restart candlepin
 
+- name: Check if CA key password file exists and has content
+  ansible.builtin.stat:
+    path: "{{ candlepin_ca_key_password }}"
+  register: _candlepin_ca_key_password_file
+
 - name: Decrypt Candlepin CA key
   ansible.builtin.command: openssl pkey -in "{{ candlepin_ca_key }}" -passin "file:{{ candlepin_ca_key_password }}"
   register: _candlepin_ca_key
   changed_when: false
+  when: _candlepin_ca_key_password_file.stat.exists and _candlepin_ca_key_password_file.stat.size > 0
+
+- name: Read Candlepin CA key (unencrypted)
+  ansible.builtin.slurp:
+    src: "{{ candlepin_ca_key }}"
+  register: _candlepin_ca_key_raw
+  when: not (_candlepin_ca_key_password_file.stat.exists and _candlepin_ca_key_password_file.stat.size > 0)
 
 - name: Create the podman secret for Candlepin CA key
   containers.podman.podman_secret:
     state: present
     name: candlepin-ca-key
-    data: "{{ _candlepin_ca_key.stdout }}"
+    data: "{{ (_candlepin_ca_key.stdout | default()) if (_candlepin_ca_key_password_file.stat.exists and _candlepin_ca_key_password_file.stat.size > 0) else (_candlepin_ca_key_raw.content | default() | b64decode) }}"
     labels:
       app: candlepin
   notify:

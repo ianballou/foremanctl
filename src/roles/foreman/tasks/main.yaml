@@ -110,6 +110,7 @@
     hostname: "{{ ansible_facts['hostname'] }}.local"
     volume:
       - 'foreman-data-run:/var/run/foreman:rw,z'
+      - '/etc/crypto-policies:/etc/crypto-policies:ro'
     secrets:
       - 'foreman-database-url,type=env,target=DATABASE_URL'
       - 'foreman-encryption-key,type=env,target=ENCRYPTION_KEY'
@@ -151,6 +152,7 @@
     hostname: "{{ ansible_facts['hostname'] }}.local"
     volume:
       - 'foreman-data-run:/var/run/foreman:rw,z'
+      - '/etc/crypto-policies:/etc/crypto-policies:ro'
     secrets:
       - 'foreman-database-url,type=env,target=DATABASE_URL'
       - 'foreman-encryption-key,type=env,target=ENCRYPTION_KEY'
@@ -209,6 +211,7 @@
     command: "foreman-rake {{ item.rake }}"
     volume:
       - 'foreman-data-run:/var/run/foreman:rw,z'
+      - '/etc/crypto-policies:/etc/crypto-policies:ro'
     secrets:
       - 'foreman-database-url,type=env,target=DATABASE_URL'
       - 'foreman-encryption-key,type=env,target=ENCRYPTION_KEY'
