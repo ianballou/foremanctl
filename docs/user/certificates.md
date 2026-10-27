@@ -220,7 +220,23 @@ foremanctl auth-bundle \
   proxy.example.com
 ```
 
-The command generates certificates for the given hostname and packages them into a tarball at `/var/lib/foremanctl/certs/bundles/<hostname>.tar.gz`.
+The command generates certificates for the given hostname and packages them into a tarball at `/var/lib/foremanctl/certs/bundles/<hostname>.tar.gz`. It also prints the `scp` command to transfer the bundle to the proxy host and the appropriate `foremanctl deploy-proxy` command to run there. Unlike `foreman-installer certs generate`, this output does not produce a foreman-installer scenario command: `auth-bundle` creates the credential bundle and `deploy-proxy` installs the containerized proxy.
+
+After generating the bundle, copy it to the proxy host and run `foremanctl deploy-proxy` on that host. Use `--flavor foreman-proxy-content` for a Foreman Proxy deployment; a Satellite Capsule uses `--flavor capsule`. For example, with a bundle generated on the Foreman server:
+
+```bash
+scp /var/lib/foremanctl/certs/bundles/proxy.example.com.tar.gz root@proxy.example.com:/root/proxy.example.com.tar.gz
+
+# On the proxy host, for Foreman:
+foremanctl deploy-proxy \\
+  --flavor foreman-proxy-content \\
+  --auth-bundle /root/proxy.example.com.tar.gz \\
+  --foreman-fqdn foreman.example.com
+
+# For Satellite, use --flavor capsule instead of foreman-proxy-content.
+```
+
+This is different from the installer workflow, where the generated instructions invoke `foreman-installer --scenario foreman-proxy-content` (or the Satellite Capsule scenario). With foremanctl, bundle creation and proxy deployment are separate commands; the bundle is generated on the main Foreman/Satellite system, then consumed by `deploy-proxy` on the proxy host. Register the host with the Foreman/Satellite server before deployment, as appropriate for your environment. The auth bundle includes private keys and OAuth credentials; transfer it securely and restrict access.
 
 An existing bundle is not rebuilt on every run. To refresh it, for example after providing updated custom server certificates, pass `--certificate-renew`:
 

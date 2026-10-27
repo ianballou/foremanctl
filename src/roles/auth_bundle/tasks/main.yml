@@ -105,3 +105,32 @@
 - name: Report auth bundle location
   ansible.builtin.debug:
     msg: "Auth bundle created: {{ auth_bundle_output_directory }}/{{ auth_bundle_hostname }}.tar.gz"
+
+- name: Show instructions for deploying a Foreman Proxy
+  vars:
+    auth_bundle_local_path: "{{ auth_bundle_output_directory }}/{{ auth_bundle_hostname }}.tar.gz"
+    auth_bundle_remote_path: "/root/{{ auth_bundle_hostname }}.tar.gz"
+  ansible.builtin.debug:
+    msg: |
+      This auth bundle contains the proxy's TLS certificates and OAuth credentials. It is consumed
+      by foremanctl, not foreman-installer, so there is no installer scenario command to run.
+
+      1. Register the proxy host with this Foreman server and install foremanctl on the proxy host.
+      2. From this Foreman server, copy the bundle to the proxy host:
+         scp {{ auth_bundle_local_path | quote }} root@{{ auth_bundle_hostname }}:{{ auth_bundle_remote_path | quote }}
+      3. On the proxy host, use foremanctl deploy-proxy to install the Foreman Proxy.
+         A Satellite Capsule uses the capsule flavor instead:
+
+         Foreman:
+         foremanctl deploy-proxy \
+           --flavor foreman-proxy-content \
+           --auth-bundle {{ ('/root/' ~ auth_bundle_hostname ~ '.tar.gz') | quote }} \\
+           --foreman-fqdn {{ foreman_name | quote }}
+
+         Satellite Capsule:
+         foremanctl deploy-proxy \\
+           --flavor capsule \\
+           --auth-bundle {{ ('/root/' ~ auth_bundle_hostname ~ '.tar.gz') | quote }} \\
+           --foreman-fqdn {{ foreman_name | quote }}
+
+      The bundle contains private keys and OAuth credentials. Transfer it securely and restrict access to it.

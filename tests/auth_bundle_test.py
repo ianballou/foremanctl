@@ -56,6 +56,16 @@ def generate_bundle(server, certificate_source, generate_custom_proxy_certs):
 
     result = subprocess.run(command, capture_output=True, text=True)
     assert result.returncode == 0, f'auth-bundle failed: {result.stdout}\n{result.stderr}'
+    return result.stdout
+
+
+def test_auth_bundle_prints_proxy_deployment_instructions(generate_bundle):
+    assert f'scp {TARBALL} root@{HOSTNAME}:/root/{HOSTNAME}.tar.gz' in generate_bundle
+    assert '--flavor foreman-proxy-content' in generate_bundle
+    assert '--flavor capsule' in generate_bundle
+    assert f'--auth-bundle /root/{HOSTNAME}.tar.gz' in generate_bundle
+    assert '--foreman-fqdn' in generate_bundle
+    assert 'foreman-installer' in generate_bundle
 
 
 @pytest.fixture(scope="module")

@@ -1,6 +1,6 @@
 ---
-help: |
-  Generate an auth bundle
+help: >-
+  Generate an auth bundle and show commands to copy it to a proxy host and deploy it with foremanctl.
 
 variables:
   hostname:
